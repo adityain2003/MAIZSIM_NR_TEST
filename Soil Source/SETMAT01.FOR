@@ -25,6 +25,9 @@ C
       ! or character*1 InitType(5)
       Real BldDn,soilair,ThAMin,ThATr
       Parameter (NTabD=100,NPar=13,NMatD=15)
+      Parameter (NumNPD_NR=4000)
+      Real DKdh
+      Common /NRdata/ DKdh(NumNPD_NR)
       character*1, dimension(NMatD)::InitType
 
       Common /HydPar/ Par(NPar,NMatD),
@@ -137,12 +140,17 @@ c          FracClay(M) =Par(13,M)
         hiM=0.1*hi1+0.9*hi2
         If(hi1.ge.hSat(M).and.hi2.ge.hSat(M)) then
           Ci=ConSat(M)
+          DKdh(i)=0.0
         Else if(hiM.ge.(hTab(NTabD)+0.04).and.hiM.le.hTab(1)) then
           iT=int((alog10(-hiM)-alh1)/dlh)+1
           S1=(ConTab(iT+1,M)-ConTab(iT,M))/(hTab(iT+1)-hTab(iT))
           Ci=ConTab(iT,M)+S1*(hiM-hTab(iT))
+          DKdh(i)=S1
         Else
           Ci=FK(hiM,Par(1,M))
+          dHnr=max(abs(hiM)*0.001, 0.001)
+          DKdh(i)=(FK(hiM+dHnr,Par(1,M))-FK(hiM-dHnr,Par(1,M)))
+     &             /(2.0*dHnr)
         Endif
         Con(i)=Ci
         hi1=hOld(i)

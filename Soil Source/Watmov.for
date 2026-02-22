@@ -21,6 +21,7 @@ cccz  Double precision CriticalH, CriticalH_R
       Real  hOld_1(NumNPD)
       Real Dif(NumNPD)
       Integer trigger_Runoff, p_Runoff
+      Real EhK, xNRc
       Dimension A(MBandD,NumNPD),B(NumNPD),F(NumNPD),DS(NumNPD),
      !    Cap(NumNPD),ListE(NumElD),E(3,3),iLoc(3),Fc(NumNPD),
      !    Sc(NumNPD),B_1(NumNPD),ThOld_1(NumNPD),A_1(MBandD,NumNPD)
@@ -230,6 +231,17 @@ C
                 if(iB.ge.1) A(iB,jG)=A(iB,jG)+AMul*E(i,j)
                 end if
 213         Continue
+C           N-R diagonal correction: d(K)/d(h) contribution
+            EhK=0.0
+            Do jnr=1,3
+              EhK=EhK+E(i,jnr)*hNew(KX(n,iLoc(jnr)))
+            End Do
+            xNRc=DKdh(iG)/3.0*AMul*EhK
+            if(lOrt) then
+              A(IADD(iG),iG)=A(IADD(iG),iG)+xNRc
+            else
+              A(1,iG)=A(1,iG)+xNRc
+            end if
 214       Continue
 215     Continue
 216   Continue

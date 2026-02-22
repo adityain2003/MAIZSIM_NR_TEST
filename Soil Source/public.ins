@@ -113,5 +113,9 @@ c the following blocks are not passed to the crop model
      !           FracOM(NMatD),TUpperLimit(NMatD), TLowerLimit(NMatD),
      !           soilair(NumNPD),thSat(NMatD),ThAMin(NMatD),ThATr(NMatD)
 	  
-      Common /ConversionFactors_parameters/ugGasCm3air_to_ppm(NumGD), 
+      Common /ConversionFactors_parameters/ugGasCm3air_to_ppm(NumGD),
      !           GasTransfCoeff(NumGD)
+
+C     NR data: dK/dh per node, shared between SetMat and WaterMover
+      Real DKdh
+      Common /NRdata/ DKdh(NumNPD)
